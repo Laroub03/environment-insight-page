@@ -8,18 +8,20 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { Credentials } from "src/app/interfaces/credentials";
 import { LoginService } from "src/app/services/login.service";
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: "app-login",
   standalone: true,
   imports: [
-    ReactiveFormsModule, ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective, NgStyle
+    MatSnackBarModule, ReactiveFormsModule, ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, IconDirective, FormControlDirective, ButtonDirective, NgStyle
   ],
   templateUrl: "./login.component.html",
   styleUrl: "./login.component.scss",
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  loginError: boolean = false;  // Add this line
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,21 +42,21 @@ export class LoginComponent {
       this.loginService.login(newLogin).subscribe(
         (response) => {
           localStorage.setItem("token", response.token);
-
           if (this.loginService.isLoggedInAdmin()) {
-            this.router.navigate(["/adjust-rankings"]);
-          } else {
-            this.router.navigate(["/rankings"]);
-          }
+            this.router.navigate(["/dashboard"]);
+          } 
         },
         (error) => {
+          this.loginError = true;  // Set the error flag on failure
           this.snackBar.open("Login failed. Please check your credentials.", "Dismiss", {
-            duration: 3000,
+            duration: 5000,
             horizontalPosition: "center",
             verticalPosition: "bottom",
-          });
+            panelClass: ['custom-snackbar'] // This should match the class you defined in your global styles
+          });          
         },
       );
     }
   }
 }
+

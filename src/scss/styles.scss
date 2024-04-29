@@ -21,3 +21,11 @@
 // Examples
 // We use those styles to show code examples, you should remove them in your application.
 @import "examples";
+
+.custom-snackbar {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 25% !important; /* Adjust this to better position the snackbar relative to your login box */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}

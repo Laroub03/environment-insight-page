@@ -4,11 +4,6 @@ import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  },
-  {
     path: 'login',
     loadComponent: () => import('./views/pages/login/login.component').then(m => m.LoginComponent),
     data: {
@@ -17,7 +12,7 @@ export const routes: Routes = [
   },
   {
   path: 'dashboard',  
-  // canActivate: [authGuard], 
+  canActivate: [authGuard], 
   loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
   },
   {
@@ -33,5 +28,10 @@ export const routes: Routes = [
     data: {
       title: 'Page 500'
     }
+  },
+  {
+    path: '',
+    redirectTo: '/login',
+    pathMatch: 'full'
   },
 ];
