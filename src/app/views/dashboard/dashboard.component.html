@@ -6,16 +6,16 @@
         <div class="small text-body-secondary">{{sensor.dateRange}}</div>
       </c-col>
       <c-col class="d-none d-md-block" sm="7">
-        <form [formGroup]="trafficRadioGroup">
+        <form [formGroup]="sensorDataGroup">
           <c-button-group class="float-end me-3" role="group">
             <input
               class="btn-check"
-              formControlName="trafficRadio"
+              formControlName="sensorData"
               type="radio"
               value="Day"
             />
             <label
-              (click)="setTrafficPeriod('Day')"
+              (click)="setSensorData('Day')"
               cButton
               cFormCheckLabel
               color="secondary"
@@ -23,12 +23,12 @@
             >Day</label>
             <input
               class="btn-check"
-              formControlName="trafficRadio"
+              formControlName="sensorData"
               type="radio"
               value="Month"
             />
             <label
-              (click)="setTrafficPeriod('Month')"
+              (click)="setSensorData('Month')"
               cButton
               cFormCheckLabel
               color="secondary"
@@ -36,12 +36,12 @@
             >Month</label>
             <input
               class="btn-check"
-              formControlName="trafficRadio"
+              formControlName="sensorData"
               type="radio"
               value="Year"
             />
             <label
-              (click)="setTrafficPeriod('Year')"
+              (click)="setSensorData('Year')"
               cButton
               cFormCheckLabel
               color="secondary"

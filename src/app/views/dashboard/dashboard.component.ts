@@ -36,11 +36,11 @@ import { ChartOptions } from 'chart.js';
 })
 export class DashboardComponent implements OnInit {
   public sensors = [
-    { id: 'humidity', title: 'Humidity', dateRange: 'January - December 2023' },
-    { id: 'altitude', title: 'Altitude', dateRange: 'January - December 2023' },
-    { id: 'pressure', title: 'Pressure', dateRange: 'January - December 2023' },
-    { id: 'temperature', title: 'Temperature', dateRange: 'January - December 2023' },
-    { id: 'light', title: 'Light', dateRange: 'January - December 2023' }
+    { id: 'humidity', title: 'Humidity', dateRange: 'January - December 2024' },
+    { id: 'altitude', title: 'Altitude', dateRange: 'January - December 2024' },
+    { id: 'pressure', title: 'Pressure', dateRange: 'January - December 2024' },
+    { id: 'temperature', title: 'Temperature', dateRange: 'January - December 2024' },
+    { id: 'light', title: 'Light', dateRange: 'January - December 2024' }
   ];
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
   readonly #document: Document = inject(DOCUMENT);
@@ -54,8 +54,8 @@ export class DashboardComponent implements OnInit {
       this.setChartStyles();
     }
   });
-  public trafficRadioGroup = new FormGroup({
-    trafficRadio: new FormControl('Month')
+  public sensorDataGroup = new FormGroup({
+    sensorData: new FormControl('Month')
   });
   
   ngOnInit(): void {
@@ -67,8 +67,8 @@ export class DashboardComponent implements OnInit {
     this.mainChart = this.#chartsData.mainChart;
   }
 
-  setTrafficPeriod(value: string): void {
-    this.trafficRadioGroup.setValue({ trafficRadio: value });
+  setSensorData(value: string): void {
+    this.sensorDataGroup.setValue({ sensorData: value });
     this.#chartsData.initMainChart(value);
     this.initCharts();
   }

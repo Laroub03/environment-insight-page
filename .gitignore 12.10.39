@@ -39,6 +39,7 @@ chrome-profiler-events*.json
 /libpeerconnection.log
 testem.log
 /typings
+/environments
 
 # System files
 .DS_Store

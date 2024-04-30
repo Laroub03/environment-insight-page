@@ -1,0 +1,15 @@
+{
+    "/sensor-data": {
+      "target": "http://10.108.149.13:8080",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/login": {
+      "target": "http://10.108.149.13:8080",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  
