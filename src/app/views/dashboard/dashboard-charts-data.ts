@@ -11,183 +11,112 @@ import {
 import { DeepPartial } from 'chart.js/dist/types/utils';
 import { getStyle, hexToRgba } from '@coreui/utils';
 
+interface SensorRanges {
+  [key: string]: { min: number, max: number, stepSize: number };
+}
+
 export interface IChartProps {
   data?: ChartData;
-  labels?: any;
+  labels?: string[];
   options?: ChartOptions;
-  colors?: any;
   type: ChartType;
-  legend?: any;
-
-  [propName: string]: any;
 }
 
 @Injectable({
   providedIn: 'any'
 })
 export class DashboardChartsData {
+  private sensorRanges: SensorRanges = {
+    humidity: { min: 0, max: 100, stepSize: 20 },
+    altitude: { min: 0, max: 5000, stepSize: 1000 },
+    pressure: { min: 900, max: 1100, stepSize: 40 },
+    temperature: { min: -50, max: 50, stepSize: 20 },
+    light: { min: 0, max: 100000, stepSize: 20000 }
+  };
+  
+  public mainChart: IChartProps = { type: 'line', labels: [], options: {} };
+
   constructor() {
     this.initMainChart();
   }
 
-  public mainChart: IChartProps = { type: 'line' };
+  private generateRandomData(elementCount: number, min: number, max: number): number[] {
+    return Array.from({ length: elementCount }, () => Math.floor(Math.random() * (max - min + 1) + min));
+  }
 
-  public random(min: number, max: number) {
-    return Math.floor(Math.random() *  (max - min + 1) + min);
+  private getChartColors(): { backgroundColor: string, borderColor: string, pointHoverBackgroundColor: string, borderWidth: number, fill: boolean } {
+    const brandInfo = getStyle('--cui-info') ?? '#20a8d8';
+    const brandInfoBg = hexToRgba(brandInfo, 10);
+    return {
+      backgroundColor: brandInfoBg,
+      borderColor: brandInfo,
+      pointHoverBackgroundColor: brandInfo,
+      borderWidth: 2,
+      fill: true
+    };
   }
 
   initMainChart(period: string = 'Month') {
-    const brandInfo = getStyle('--cui-info') ?? '#20a8d8';
-    const brandInfoBg = hexToRgba(getStyle('--cui-info') ?? '#20a8d8', 10);
+    const colors = this.getChartColors();
+    const labels = this.getLabelsForPeriod(period);
+    const data = this.generateRandomData(labels.length, 50, 240);
 
+    const datasets: ChartDataset[] = [{
+      data: data,
+      label: 'Current',
+      ...colors
+    }];
 
-    // mainChart
-    this.mainChart['elements'] = period === 'Year' ? 12 : 27;
-    this.mainChart['Data1'] = [];
-    this.mainChart['Data2'] = [];
-    this.mainChart['Data3'] = [];
+    this.mainChart.data = { datasets, labels };
+    this.mainChart.options = this.getChartOptions();
+  }
 
-    // generate random values for mainChart
-    for (let i = 0; i <= this.mainChart['elements']; i++) {
-      this.mainChart['Data1'].push(this.random(50, 240));
+  private getLabelsForPeriod(period: string): string[] {
+    switch (period) {
+      case 'Year':
+        return ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+      case 'Day':
+        return Array.from({ length: 24 }, (_, i) => `${i}:00`);
+      default:
+        return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].concat(...Array(3).fill(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']));
     }
+  }
 
-    const week = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday'
-    ];
+  private getChartOptions(): ChartOptions {
+    return {
+      maintainAspectRatio: false,
+      plugins: this.getPlugins(),
+      scales: this.getScales('defaultSensorType'),
+      elements: {
+        line: { tension: 0.4 },
+        point: { radius: 0, hitRadius: 10, hoverRadius: 4, hoverBorderWidth: 3 }
+      }
+    };
+  }
 
-    const hour = [
-      '00:00',
-      '02:00',
-      '04:00',
-      '06:00',
-      '08:00',
-      '10:00',
-      '12:00',
-      '14:00',
-      '16:00',
-      '18:00',
-      '20:00',
-      '22:00',
-      '24:00',
-    ];
-
-    let labels: string[] = [];
-    if (period === 'Year') {
-      labels = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
-    } else if( period === 'Day') {
-      labels = hour;
-    }
-    else {
-      labels = week.concat(week, week, week);
-    }
-
-    const colors = [
-      {
-        // brandInfo
-        backgroundColor: brandInfoBg,
-        borderColor: brandInfo,
-        pointHoverBackgroundColor: brandInfo,
-        borderWidth: 2,
-        fill: true
-      },
-    ];
-
-    const datasets: ChartDataset[] = [
-      {
-        data: this.mainChart['Data1'],
-        label: 'Current',
-        ...colors[0]
-      },
-    ];
-
-    const plugins: DeepPartial<PluginOptionsByType<any>> = {
-      legend: {
-        display: false
-      },
+  private getPlugins(): DeepPartial<PluginOptionsByType<any>> {
+    return {
+      legend: { display: false },
       tooltip: {
         callbacks: {
           labelColor: (context) => ({ backgroundColor: context.dataset.borderColor } as TooltipLabelStyle)
         }
       }
     };
-
-    const scales = this.getScales();
-
-    const options: ChartOptions = {
-      maintainAspectRatio: false,
-      plugins,
-      scales,
-      elements: {
-        line: {
-          tension: 0.4
-        },
-        point: {
-          radius: 0,
-          hitRadius: 10,
-          hoverRadius: 4,
-          hoverBorderWidth: 3
-        }
-      }
-    };
-
-    this.mainChart.type = 'line';
-    this.mainChart.options = options;
-    this.mainChart.data = {
-      datasets,
-      labels
-    };
   }
 
-  getScales() {
-    const colorBorderTranslucent = getStyle('--cui-border-color-translucent');
-    const colorBody = getStyle('--cui-body-color');
-
-    const scales: ScaleOptions<any> = {
-      x: {
-        grid: {
-          color: colorBorderTranslucent,
-          drawOnChartArea: false
-        },
-        ticks: {
-          color: colorBody
-        }
-      },
+  getScales(sensorType: string): ScaleOptions<any> {
+    const range = this.sensorRanges[sensorType] || { min: 0, max: 250, stepSize: 50 };
+    return {
       y: {
-        border: {
-          color: colorBorderTranslucent
-        },
-        grid: {
-          color: colorBorderTranslucent
-        },
-        max: 250,
         beginAtZero: true,
+        max: range.max,
+        min: range.min,
         ticks: {
-          color: colorBody,
-          maxTicksLimit: 5,
-          stepSize: Math.ceil(250 / 5)
+          stepSize: range.stepSize,
+          maxTicksLimit: 5
         }
       }
     };
-    return scales;
-  }
+  }  
 }

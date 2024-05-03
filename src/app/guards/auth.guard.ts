@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = (
   const auth = inject(LoginService);
   const router = inject(Router);
 
-  if (auth.isLoggedInAdmin()) {
+  if (auth.isLoggedIn()) {
     return true;
   } else {
     router.navigate(["/rankings"]);

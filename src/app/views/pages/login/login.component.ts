@@ -19,44 +19,49 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   templateUrl: "./login.component.html",
   styleUrl: "./login.component.scss",
 })
+
 export class LoginComponent {
   loginForm: FormGroup;
-  loginError: boolean = false;  // Add this line
 
   constructor(
     private formBuilder: FormBuilder,
     private loginService: LoginService,
     private snackBar: MatSnackBar,
-    private router: Router,
+    private router: Router
   ) {
     this.loginForm = this.formBuilder.group({
-      username: ["", Validators.required],
-      password: ["", Validators.required],
+      username: ['', Validators.required],
+      password: ['', Validators.required]
     });
   }
 
   onLogin(): void {
     if (this.loginForm.valid) {
-      const newLogin = this.loginForm.value as Credentials;
+      const credentials: Credentials = this.loginForm.value;
 
-      this.loginService.login(newLogin).subscribe(
-        (response) => {
-          localStorage.setItem("token", response.token);
-          if (this.loginService.isLoggedInAdmin()) {
-            this.router.navigate(["/dashboard"]);
-          } 
+      this.loginService.login(credentials).subscribe(
+        () => {
+          this.snackBar.open('Login successful!', 'Close', {
+            duration: 3000,
+            panelClass: ['custom-snackbar'] 
+          });
+          this.router.navigate(['/dashboard']);
         },
         (error) => {
-          this.loginError = true;  // Set the error flag on failure
-          this.snackBar.open("Login failed. Please check your credentials.", "Dismiss", {
+          console.error('Login error:', error);
+          this.snackBar.open('Login failed. Please check your credentials.', 'Dismiss', {
             duration: 5000,
-            horizontalPosition: "center",
-            verticalPosition: "bottom",
-            panelClass: ['custom-snackbar'] // This should match the class you defined in your global styles
-          });          
-        },
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: ['custom-snackbar'] 
+          });
+        }
       );
+    } else {
+      this.snackBar.open('Please fill in all required fields.', 'Dismiss', {
+        duration: 5000,
+        panelClass: ['custom-snackbar'] 
+      });
     }
   }
 }
-

@@ -37,7 +37,8 @@ import {
   ɵɵrestoreView,
   ɵɵstyleProp,
   ɵɵviewQuery
-} from "./chunk-7BF6JNB5.js";
+} from "./chunk-KVUPPYK4.js";
+import "./chunk-HR7ETXTP.js";
 import {
   __spreadProps,
   __spreadValues
