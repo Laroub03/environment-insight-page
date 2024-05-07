@@ -10,6 +10,8 @@ import {
 } from 'chart.js';
 import { DeepPartial } from 'chart.js/dist/types/utils';
 import { getStyle, hexToRgba } from '@coreui/utils';
+import { SensorDataService } from '../../services/sensor-Data.service';
+import { ClientData } from '../../interfaces/clientData';
 
 interface SensorRanges {
   [key: string]: { min: number, max: number, stepSize: number };
@@ -31,12 +33,12 @@ export class DashboardChartsData {
     altitude: { min: 0, max: 5000, stepSize: 1000 },
     pressure: { min: 900, max: 1100, stepSize: 40 },
     temperature: { min: -50, max: 50, stepSize: 20 },
-    light: { min: 0, max: 100000, stepSize: 20000 }
+    light: { min: 0, max: 1023, stepSize: 20000 }
   };
   
   public mainChart: IChartProps = { type: 'line', labels: [], options: {} };
 
-  constructor() {
+  constructor(private sensorDataService: SensorDataService) {
     this.initMainChart();
   }
 
@@ -57,9 +59,19 @@ export class DashboardChartsData {
   }
 
   initMainChart(period: string = 'Month') {
+    var humidityValues: number[] = [];
+    var clientData: ClientData [] = [];
+    this.sensorDataService.clientsData$.subscribe((data) => clientData = data);
+
+    // Iterate over the clientDataList using a for loop
+    for (const data of clientData) {
+      // Extract the humidity value from each ClientData object and push it to the humidityList
+      humidityValues.push(data.light);
+    }
+
     const colors = this.getChartColors();
     const labels = this.getLabelsForPeriod(period);
-    const data = this.generateRandomData(labels.length, 50, 240);
+    const data = humidityValues;
 
     const datasets: ChartDataset[] = [{
       data: data,

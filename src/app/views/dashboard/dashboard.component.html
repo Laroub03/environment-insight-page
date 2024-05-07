@@ -1,3 +1,28 @@
+<c-col class="d-none d-md-block" sm="7">
+  <form [formGroup]="sensorDataGroup">
+    <c-button-group class="float-end me-3" role="group">
+      <!-- Existing radio button code -->
+    </c-button-group>
+    <!-- Date Picker Inputs -->
+    <div class="d-flex justify-content-end">
+      <input type="text" class="form-control me-2" 
+             formControlName="clientId" 
+             placeholder="clientId">
+      <input type="date" class="form-control me-2" 
+             formControlName="fromDate" 
+             placeholder="From"
+             [min]="minDate" 
+             [max]="getMaxFromDate()">
+      <input type="date" class="form-control me-2" 
+             formControlName="toDate" 
+             placeholder="To"
+             [min]="getMinToDate()" 
+             [max]="maxDate">
+      <button cButton color="primary" variant="outline" (click)="onSubmit()" [disabled]="!sensorDataGroup.valid">Submit</button>
+    </div>
+  </form>
+</c-col>
+
 <c-card class="my-4" *ngFor="let sensor of sensors">
   <c-card-body>
     <c-row>
