@@ -58,30 +58,44 @@ export class DashboardChartsData {
     };
   }
 
-  initMainChart(period: string = 'Month') {
-    var humidityValues: number[] = [];
+  extractValuesAndRange(property: keyof ClientData): { values: any[], range: number } {
     var clientData: ClientData [] = [];
     this.sensorDataService.clientsData$.subscribe((data) => clientData = data);
+    let values: any[] = clientData.map(data => data[property]);
+    let min = Math.min(...values);
+    let max = Math.max(...values);
+    let range = max - min;
+    return { values, range };
+  }
 
-    // Iterate over the clientDataList using a for loop
-    for (const data of clientData) {
-      // Extract the humidity value from each ClientData object and push it to the humidityList
-      humidityValues.push(data.light);
-    }
-
+  public initMainChart(period: string = 'Month') {
     const colors = this.getChartColors();
     const labels = this.getLabelsForPeriod(period);
-    const data = humidityValues;
+    const datasets: ChartDataset[] = [];
 
-    const datasets: ChartDataset[] = [{
-      data: data,
-      label: 'Current',
-      ...colors
-    }];
+    // Define properties and titles directly within the loop
+    const properties: (keyof ClientData)[] = ['humidity', 'altitude', 'pressure', 'temperature', 'light'];
+    const titles: string[] = ['Humidity', 'Altitude', 'Pressure', 'Temperature', 'Light'];
+
+    // Manually populate datasets for each property and title
+    for (let i = 0; i < properties.length; i++) {
+        const property = properties[i];
+        const title = titles[i];
+
+        let { values, range } = this.extractValuesAndRange(property);
+
+        const dataset: ChartDataset = {
+            data: values,
+            label: title,
+            ...colors
+        };
+
+        datasets.push(dataset);
+    }
 
     this.mainChart.data = { datasets, labels };
     this.mainChart.options = this.getChartOptions();
-  }
+}
 
   private getLabelsForPeriod(period: string): string[] {
     switch (period) {

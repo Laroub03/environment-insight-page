@@ -28,6 +28,7 @@ import { DashboardChartsData, IChartProps } from './dashboard-charts-data';
 import { ChartOptions } from 'chart.js';
 import { SensorDataService } from 'src/app/services/sensor-Data.service';
 import { formatDate } from '@angular/common';
+import { ClientData } from 'src/app/interfaces/clientData';
 
 @Component({
   selector: 'app-dashboard-card',
@@ -36,11 +37,10 @@ import { formatDate } from '@angular/common';
   standalone: true,
   imports: [CommonModule, WidgetsDropdownComponent, TextColorDirective, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressBarDirective, ProgressComponent, WidgetsBrandComponent, CardHeaderComponent, TableDirective, AvatarComponent]
 })
-export class DashboardComponent implements OnInit { 
+export class DashboardComponent { 
   sensorData: any;
   minDate: string = '';
   maxDate: string = '';
-  
 
   public sensors = [
     { id: 'humidity', title: 'Humidity', dateRange: '' },
@@ -70,6 +70,8 @@ export class DashboardComponent implements OnInit {
   });
   
   constructor(private sensorDataService: SensorDataService) {}
+
+
 
   ngOnInit(): void {
     this.initializeDateRange();
@@ -148,10 +150,7 @@ export class DashboardComponent implements OnInit {
       this.initCharts();
       this.setChartStyles(); // Update chart styles with the new configuration
     }
-  }
-  
-
-
+  } 
   
   handleChartRef($chartRef: any) {
     if ($chartRef) {
